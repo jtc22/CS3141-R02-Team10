@@ -27,6 +27,13 @@ public class CameraMovement : MonoBehaviour
             Vector3 difference = dragOrigin - cam.ScreenToWorldPoint(Input.mousePosition);
 
             cam.transform.position += difference;
+
+            // Get the bounding area of the camera view, will be used to deactivate voxels that cant be seen
+            // Vector3 lowerBound = cam.ScreenToWorldPoint(new Vector3(0, 0, 0));
+            // Vector3 upperBound = cam.ScreenToWorldPoint(new Vector3(1, 1, 0));
+
+            // Debug.Log("Lower: " + lowerBound);
+            // Debug.Log("Upper: " + upperBound);
         }
 
     }
