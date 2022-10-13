@@ -10,12 +10,15 @@ public class MapGeneration : MonoBehaviour
     [SerializeField]
     [Range(0.0f, 10.0f)] float noiseFrequency = 1.01f;
 
-    private int[,,] map = new int[100, 100, 100];
+    private int[,,] map = new int[100, 100, 20];
 
+    private GameObject objStone;
+    private GameObject objLimestone;
+    private GameObject objAir;
+    
     private int width;
     private int height;
     private int depth;
-
     private int currDepth;
 
     private GameObject[,,] createdVoxels;
@@ -28,6 +31,14 @@ public class MapGeneration : MonoBehaviour
         height = map.GetLength(1);
         depth = map.GetLength(2);
         currDepth = depth / 2;
+
+        objStone = new GameObject("StoneHolder");
+        objLimestone = new GameObject("LimestoneHolder");
+        objAir = new GameObject("AirHolder");
+
+        objStone.transform.parent = this.transform;
+        objLimestone.transform.parent = this.transform;
+        objAir.transform.parent = this.transform;
 
         createdVoxels = new GameObject[width, height, depth];
 
@@ -64,7 +75,6 @@ public class MapGeneration : MonoBehaviour
                 for (int z = 0; z < depth; z++)
                 {
                     float noise = Mathf.Abs(perlinNoise.get3DPerlinNoise(new Vector3((float)x/width, (float)y/height, (float)z/depth), noiseFrequency));
-                    // Debug.Log(noise);
                     map[x,y,z] = (int) Mathf.Round(noise * 3);
                 }
             }
@@ -100,20 +110,25 @@ public class MapGeneration : MonoBehaviour
                 createdVoxels[x, y, z].SetActive(true);
                 continue;
             }
-            
+            GameObject obj;
             // If the voxel doesn't exist create a new one with the given location
             if(map[x,y,z] == 0)
             {
-                createdVoxels[x, y, z] = spawnObj(stone, x / 8f, y / 8f);
+                obj = spawnObj(limestone, x / 8f, y / 8f);
+                obj.transform.parent = objLimestone.transform;
             }
             else if (map[x, y, z] == 1)
             {
-                createdVoxels[x, y, z] = spawnObj(limestone, x / 8f, y / 8f);
+                obj = spawnObj(stone, x / 8f, y / 8f);
+                obj.transform.parent = objStone.transform;
             }
             else
             {
-                createdVoxels[x, y, z] = spawnObj(air, x / 8f, y / 8f);
+                obj = spawnObj(air, x / 8f, y / 8f);
+                obj.transform.parent = objAir.transform;
             }
+
+            createdVoxels[x, y, z] = obj;
         }
     }
 
@@ -128,7 +143,6 @@ public class MapGeneration : MonoBehaviour
     GameObject spawnObj(GameObject obj, float width, float height, float depth = 0)
     {
         obj = Instantiate(obj, new Vector3(width, height, depth), Quaternion.identity);
-        obj.transform.parent = this.transform;
         return obj;
     }
 }
