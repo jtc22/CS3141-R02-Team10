@@ -45,7 +45,7 @@ public class MapGeneration : MonoBehaviour
         InitializeMap();
         Generation();
     }
-
+    //comment
     void Update()
     {
         if(Input.mouseScrollDelta.y > 0)
@@ -76,6 +76,7 @@ public class MapGeneration : MonoBehaviour
                 {
                     float noise = Mathf.Abs(perlinNoise.get3DPerlinNoise(new Vector3((float)x/width, (float)y/height, (float)z/depth), noiseFrequency));
                     map[x,y,z] = (int) Mathf.Round(noise * 3);
+                    
                 }
             }
         }
