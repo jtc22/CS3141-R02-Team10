@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// TEST COMMENT
+
 public class perlinNoise
 {
     private static int[] permutation = {
