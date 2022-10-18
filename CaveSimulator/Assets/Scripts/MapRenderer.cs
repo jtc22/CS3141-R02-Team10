@@ -4,34 +4,23 @@ using UnityEngine;
 
 public class MapRenderer : MonoBehaviour
 {
-    [SerializeField]
-    [Range(0.0f, 10.0f)] float noiseFrequency = 1.01f;
-
+    [SerializeField] public GameObject stone;
+    [SerializeField] public GameObject limeStone;
+    [SerializeField] public GameObject air;
     
-    private Map map;
-    
-    private int[,,] mapArr;
-    private int width;
-    private int height;
-    private int depth;
+    public Map map { get; set;}
     private int currDepth;
-
     private GameObject[,,] createdVoxels;
     private HashSet<Vector3> visibleVoxels = new HashSet<Vector3>();
 
     // Start is called before the first frame update
     void Start()
     {
-        mapArr = Map.map;
+        map = new Map(500, 200, 10, 25.5f, new GameObject[3] {stone, limeStone, air});
+        currDepth = map.depth / 2;
 
-        width = mapArr.GetLength(0);
-        height = mapArr.GetLength(1);
-        depth = mapArr.GetLength(2);
-        currDepth = depth / 2;
+        createdVoxels = new GameObject[map.width, map.height, map.depth];
 
-        createdVoxels = new GameObject[width, height, depth];
-
-        InitializeMap();
         Generation();
     }
     //comment
@@ -39,7 +28,7 @@ public class MapRenderer : MonoBehaviour
     {
         if(Input.mouseScrollDelta.y > 0)
         {
-            if(currDepth < depth - 1)
+            if(currDepth < map.depth - 1)
             {
                 currDepth++;
                 Generation();
@@ -55,31 +44,15 @@ public class MapRenderer : MonoBehaviour
         }
     }
 
-    void InitializeMap()
-    {
-        for (int x = 0; x < width; x++)
-        {
-            for (int y = 0; y < height; y++)
-            {
-                for (int z = 0; z < depth; z++)
-                {
-                    float noise = Mathf.Abs(perlinNoise.get3DPerlinNoise(new Vector3((float)x/width, (float)y/height, (float)z/depth), noiseFrequency));
-                    mapArr[x,y,z] = (int) Mathf.Round(noise * 2);
-                    
-                }
-            }
-        }
-    }
-
-
     void Generation()
     {
         int z = currDepth;
         DisableVisibleVoxels();
         visibleVoxels.Clear();
-        for (int x = 0; x < width; x++)
+
+        for (int x = 0; x < map.width; x++)
         {
-            for (int y = 0; y < height; y++)
+            for (int y = 0; y < map.height; y++)
             {
                 visibleVoxels.Add(new Vector3(x, y, z));
             }
@@ -95,7 +68,7 @@ public class MapRenderer : MonoBehaviour
             int x = (int) v.x;
             int y = (int) v.y;
             int z = (int) v.z;
-            int mapVal = mapArr[x, y, z];
+            int mapVal = map.mapMatrix[x, y, z];
             // If voxel already is created, just set it to active and continue
             if(createdVoxels[x, y, z] != null)
             {
@@ -103,8 +76,8 @@ public class MapRenderer : MonoBehaviour
                 continue;
             }
             // If the voxel doesn't exist create a new one with the given location
-            obj = spawnObj(Map.makeUp[mapVal], x, y);
-            obj.transform.parent = Map.materialHolders[mapVal].transform;
+            obj = spawnObj(map.materialMakeUp[mapVal], x, y);
+            // obj.transform.parent = Map.materialHolders[mapVal].transform;
 
             createdVoxels[x, y, z] = obj;
         }

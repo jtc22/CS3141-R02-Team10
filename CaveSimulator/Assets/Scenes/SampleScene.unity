@@ -301,9 +301,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 519420031}
-  zoomStep: 1
+  zoomStep: 5
   minCamSize: 1
-  maxCamSize: 20
+  mr: {fileID: 1361770933}
 --- !u!1 &1003384869
 GameObject:
   m_ObjectHideFlags: 0
@@ -548,9 +548,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stone: {fileID: 645801685761029938, guid: 292ec21e7e8d6f14e9a4ae4b1fc8024f, type: 3}
-  limestone: {fileID: 4102688657889505222, guid: ab4e731b441397941ad072e40f8a72ec, type: 3}
+  limeStone: {fileID: 4102688657889505222, guid: ab4e731b441397941ad072e40f8a72ec, type: 3}
   air: {fileID: 2206997142416844007, guid: ec43bfafd65280b4ea6bde8599db8dc6, type: 3}
-  noiseFrequency: 3.32
 --- !u!4 &1361770934
 Transform:
   m_ObjectHideFlags: 0

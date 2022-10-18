@@ -5,8 +5,17 @@ using UnityEngine;
 public class CameraMovement : MonoBehaviour
 {
     [SerializeField] private Camera cam;
-    [SerializeField] private float zoomStep, minCamSize, maxCamSize;
+    [SerializeField] private float zoomStep, minCamSize;
+    [SerializeField] public MapRenderer mr;
     private Vector3 dragOrigin;
+    private float maxCamSize;
+
+    void Start()
+    {
+        cam.transform.position += new Vector3(mr.map.width / 2, mr.map.height / 2);
+        cam.orthographicSize = mr.map.height / 2;
+        maxCamSize = mr.map.width / 2;
+    }
 
     // Update is called once per frame
     void Update()
