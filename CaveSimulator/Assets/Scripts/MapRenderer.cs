@@ -12,14 +12,26 @@ public class MapRenderer : MonoBehaviour
     private int currDepth;
     private GameObject[,,] createdVoxels;
     private HashSet<Vector3> visibleVoxels = new HashSet<Vector3>();
+    private GameObject[] typeHolders;
 
     // Start is called before the first frame update
     void Start()
     {
-        map = new Map(500, 200, 10, 25.5f, new GameObject[3] {stone, limeStone, air});
+        map = new Map(500, 500, 5, 15.5f, new GameObject[3] {stone, limeStone, air});
         currDepth = map.depth / 2;
 
         createdVoxels = new GameObject[map.width, map.height, map.depth];
+
+        typeHolders = new GameObject[map.numMaterials()];
+
+        // Create the gameobjects requires to hold the textures of the generated map
+        for(int i = 0; i < map.numMaterials(); i++)
+        {
+            typeHolders[i] = new GameObject("Material" + map.materialMakeUp[i].name);
+            typeHolders[i].transform.position = new Vector3(map.width/2, map.height/2, 0);
+            typeHolders[i].transform.parent = this.transform;
+            typeHolders[i].AddComponent<SpriteRenderer>();
+        }
 
         Generation();
     }
@@ -50,16 +62,26 @@ public class MapRenderer : MonoBehaviour
         DisableVisibleVoxels();
         visibleVoxels.Clear();
 
-        for (int x = 0; x < map.width; x++)
+        for (int i = 0; i < map.numMaterials(); i++)
         {
-            for (int y = 0; y < map.height; y++)
-            {
-                visibleVoxels.Add(new Vector3(x, y, z));
-            }
+            SpriteRenderer sr = typeHolders[i].GetComponent<SpriteRenderer>();
+            Texture2D tex = map.materialTextureLayers[z, i];
+            sr.sprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 1.0f);
+            sr.color = new Color(Random.Range(0.0f, 0.6f), Random.Range(0.0f, 0.6f), Random.Range(0.0f, 0.6f), 1);
         }
-        GenerateObjects();
+
+        // Old method of creating voxels
+        // for (int x = 0; x < map.width; x++)
+        // {
+        //     for (int y = 0; y < map.height; y++)
+        //     {
+        //         visibleVoxels.Add(new Vector3(x, y, z));
+        //     }
+        // }
+        // GenerateObjects();
     }
 
+    // Deprecated old method, unused
     void GenerateObjects()
     {
         GameObject obj;
