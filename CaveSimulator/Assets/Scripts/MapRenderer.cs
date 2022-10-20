@@ -17,7 +17,7 @@ public class MapRenderer : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        map = new Map(500, 500, 5, 15.5f, new GameObject[3] {stone, limeStone, air});
+        map = new Map(500, 200, 100, new GameObject[3] {stone, limeStone, air});
         currDepth = map.depth / 2;
 
         createdVoxels = new GameObject[map.width, map.height, map.depth];
@@ -67,7 +67,6 @@ public class MapRenderer : MonoBehaviour
             SpriteRenderer sr = typeHolders[i].GetComponent<SpriteRenderer>();
             Texture2D tex = map.materialTextureLayers[z, i];
             sr.sprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 1.0f);
-            sr.color = new Color(Random.Range(0.0f, 0.6f), Random.Range(0.0f, 0.6f), Random.Range(0.0f, 0.6f), 1);
         }
 
         // Old method of creating voxels
