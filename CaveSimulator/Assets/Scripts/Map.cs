@@ -4,6 +4,17 @@ using UnityEngine;
 
 public class Map
 {
+    
+    // TODO getlayer()
+    // TODO edit functions
+    // TODO material class
+    // TODO map parameters (rainfall, temp, elevation, humidity, air pressure/makeup), water table
+    // TODO pack into CSV file
+    // TODO load map from CSV
+    // TODO enum for material type
+    // TODO getAttributes(enum) for material type
+
+    // TODO Generation - map features
 
     // Public Variables
     public int[,,] mapMatrix { get; set; }
@@ -81,7 +92,6 @@ public class Map
         }
     }
 
-    
 
     public int numMaterials()
     {
