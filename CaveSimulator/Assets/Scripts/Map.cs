@@ -12,16 +12,29 @@ public class Map
     // TODO pack into CSV file
     // TODO load map from CSV
     // TODO enum for material type
-    // TODO getAttributes(enum) for material type
+    // TODO getAttributes(enum) for material 
+
 
     // TODO Generation - map features
+
+    enum Material {
+        stone,
+        limeStone,
+        air
+    }
+
+    struct MaterialProperty {
+        public int density;
+        public int hardness;
+        public int solubility;
+        public Color color;
+    }
 
     // Public Variables
     public int[,,] mapMatrix { get; set; }
     public int width { get; }
     public int height { get; }
     public int depth { get; }
-    public GameObject[] materialMakeUp { get; }
     public Texture2D[,] materialTextureLayers { get; set; }
 
     // Private variables
@@ -29,12 +42,12 @@ public class Map
     
 
     // Constructor
-    public Map(int width, int height, int depth, float noiseFrequency, GameObject[] materials)
+    public Map(int width, int height, int depth, GameObject[] materials)
     {
         this.width = width;
         this.height = height;
         this.depth = depth;
-        this.noiseFrequency = noiseFrequency;
+        this.noiseFrequency = width / 20f;
         this.materialMakeUp = materials;
         mapMatrix = new int[width, height, depth];
         InitializeMap();
@@ -76,8 +89,10 @@ public class Map
                 {
                     float divisor = Mathf.Max(width, height, depth);
                     float noise = Mathf.Abs(perlinNoise.get3DPerlinNoise(new Vector3((float)x / divisor, (float)y / divisor, (float)z / divisor), noiseFrequency));
-                    mapMatrix[x, y, z] = (int)Mathf.Round(noise * 2);
-                    materialTextureLayers[z, (int)Mathf.Round(noise * 2)].SetPixel(x, y, new Color(1, 1, 1, 1));
+                    int material = (int)Mathf.Round(noise * 3);
+                    if (material > 2) material = 2;
+                    mapMatrix[x, y, z] = material;
+                    materialTextureLayers[z, material].SetPixel(x, y, getColor(material));
                 }
             }
         }
@@ -92,10 +107,44 @@ public class Map
         }
     }
 
+    // public Color getColor(int material)
+    // {
+    //     switch (material)
+    //     {
+    //         case(stone):
+    //             return new Color(0.77f, 0.78f, 0.79f, 1);
+    //         case(limestone):
+    //             return new Color(0.74f, 0.74f, 0.56f, 1);
+    //         case(air):
+    //             return new Color(0.32f, 0.32f, 0.32f, 1);
+    //         default:
+    //             return new Color(1, 1, 1, 1);
+    //     }
+    // }
 
-    public int numMaterials()
-    {
-        return materialMakeUp.GetLength(0);
+    public MaterialProperty getMaterialProperties(enum Material){
+        MaterialProperty prop = new MaterialProperty();
+        switch(material)
+        {
+            case(stone):
+                prop.density = 1;
+                prop.hardness = 1;
+                prop.solubility = 1;
+                prop.color = new Color(0.77f, 0.78f, 0.79f, 1);
+                return prop;
+            case(limeStone)
+                prop.density = 1;
+                prop.hardness = 1;
+                prop.solubility = 1;
+                prop.color = new Color(0.74f, 0.74f, 0.56f, 1);
+                return prop;
+            case(air)
+                prop.density = 1;
+                prop.hardness = 1;
+                prop.solubility = 1;
+                prop.color = new Color(0.32f, 0.32f, 0.32f, 1);
+                return prop;
+        }
     }
 
 }
