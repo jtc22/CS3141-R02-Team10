@@ -17,13 +17,13 @@ public class Map
 
     // TODO Generation - map features
 
-    enum Material {
+    public enum Material {
         stone,
         limeStone,
         air
     }
 
-    struct MaterialProperty {
+    private struct MaterialProperty {
         public int density;
         public int hardness;
         public int solubility;
@@ -48,7 +48,6 @@ public class Map
         this.height = height;
         this.depth = depth;
         this.noiseFrequency = width / 20f;
-        this.materialMakeUp = materials;
         mapMatrix = new int[width, height, depth];
         InitializeMap();
     }
@@ -91,8 +90,9 @@ public class Map
                     float noise = Mathf.Abs(perlinNoise.get3DPerlinNoise(new Vector3((float)x / divisor, (float)y / divisor, (float)z / divisor), noiseFrequency));
                     int material = (int)Mathf.Round(noise * 3);
                     if (material > 2) material = 2;
+                    MaterialProperty mat = getMaterialProperties((Material) material);
                     mapMatrix[x, y, z] = material;
-                    materialTextureLayers[z, material].SetPixel(x, y, getColor(material));
+                    materialTextureLayers[z, material].SetPixel(x, y, mat.color);
                 }
             }
         }
@@ -107,42 +107,38 @@ public class Map
         }
     }
 
-    // public Color getColor(int material)
-    // {
-    //     switch (material)
-    //     {
-    //         case(stone):
-    //             return new Color(0.77f, 0.78f, 0.79f, 1);
-    //         case(limestone):
-    //             return new Color(0.74f, 0.74f, 0.56f, 1);
-    //         case(air):
-    //             return new Color(0.32f, 0.32f, 0.32f, 1);
-    //         default:
-    //             return new Color(1, 1, 1, 1);
-    //     }
-    // }
+    public int numMaterials()
+    {
+        return System.Enum.GetNames(typeof(Material)).Length;
+    }
 
-    public MaterialProperty getMaterialProperties(enum Material){
+    private MaterialProperty getMaterialProperties(Material material){
         MaterialProperty prop = new MaterialProperty();
-        switch(material)
+        switch (material)
         {
-            case(stone):
+            case(Material.stone):
                 prop.density = 1;
                 prop.hardness = 1;
                 prop.solubility = 1;
                 prop.color = new Color(0.77f, 0.78f, 0.79f, 1);
                 return prop;
-            case(limeStone)
+            case(Material.limeStone):
                 prop.density = 1;
                 prop.hardness = 1;
                 prop.solubility = 1;
                 prop.color = new Color(0.74f, 0.74f, 0.56f, 1);
                 return prop;
-            case(air)
+            case(Material.air):
                 prop.density = 1;
                 prop.hardness = 1;
                 prop.solubility = 1;
                 prop.color = new Color(0.32f, 0.32f, 0.32f, 1);
+                return prop;
+            default:
+                prop.density = 1;
+                prop.hardness = 1;
+                prop.solubility = 1;
+                prop.color = new Color(0.0f, 0.0f, 0.0f, 0.0f);
                 return prop;
         }
     }
