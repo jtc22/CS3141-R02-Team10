@@ -27,12 +27,11 @@ public class MapRenderer : MonoBehaviour
         // Create the gameobjects requires to hold the textures of the generated map
         for(int i = 0; i < map.numMaterials(); i++)
         {
-            typeHolders[i] = new GameObject("Material"); // + map.materialMakeUp[i].name);
+            typeHolders[i] = new GameObject("Material_" + (Map.Material)i); // + map.materialMakeUp[i].name);
             typeHolders[i].transform.position = new Vector3(map.width/2, map.height/2, 0);
             typeHolders[i].transform.parent = this.transform;
             typeHolders[i].AddComponent<SpriteRenderer>();
             typeHolders[i].AddComponent<MineralHover>();
-            typeHolders[i].layer = i + 10;
         }
 
         Generation();

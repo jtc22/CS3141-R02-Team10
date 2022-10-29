@@ -21,6 +21,7 @@ public class CameraMovement : MonoBehaviour
     void Update()
     {
         PanCamera();
+
     }
 
     private void PanCamera()
@@ -29,6 +30,14 @@ public class CameraMovement : MonoBehaviour
         if(Input.GetMouseButtonDown(0))
         {
             dragOrigin = cam.ScreenToWorldPoint(Input.mousePosition);
+
+            Collider2D[] results;
+            results = Physics2D.OverlapPointAll(dragOrigin);
+            foreach (Collider2D col in results)
+            {
+                MineralHover mh = col.GetComponent<MineralHover>();
+                mh.MouseOver();
+            }
         }
 
         if (Input.GetMouseButton(0))
@@ -36,13 +45,6 @@ public class CameraMovement : MonoBehaviour
             Vector3 difference = dragOrigin - cam.ScreenToWorldPoint(Input.mousePosition);
 
             cam.transform.position += difference;
-
-            // Get the bounding area of the camera view, will be used to deactivate voxels that cant be seen
-            // Vector3 lowerBound = cam.ScreenToWorldPoint(new Vector3(0, 0, 0));
-            // Vector3 upperBound = cam.ScreenToWorldPoint(new Vector3(1, 1, 0));
-
-            // Debug.Log("Lower: " + lowerBound);
-            // Debug.Log("Upper: " + upperBound);
         }
 
     }
