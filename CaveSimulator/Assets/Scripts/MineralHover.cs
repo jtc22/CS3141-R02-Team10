@@ -23,9 +23,16 @@ public class MineralHover : MonoBehaviour
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Color c = tex.GetPixel((int)mousePos.x, (int)mousePos.y);
             if(c.a == 0)
+            {
                 sr.color = new Color(1, 1, 1, 1);
+            }
             else
-                sr.color = new Color(0.7f, 1f, 0.7f, 1);
+            {
+                string data = "Current Mineral: " + col2d.transform.name + "\n" +
+                                "Makeup: " + (getPercentage() * 100).ToString("F2") + "%\n";
+                MaterialDataUI.ShowMineralData(data);
+                sr.color = new Color(0.9f, .9f, 0.9f, 1);
+            }
                 
     }
 

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Map
 {
-    
+
     // TODO getlayer()
     // TODO edit functions
     // TODO material class
@@ -16,9 +16,10 @@ public class Map
 
 
     // TODO Generation - map features
+    // TODO Add dolomite, sandstone, and granite
 
     public enum Material {
-        stone,
+        basalt,
         limeStone,
         air
     }
@@ -116,7 +117,7 @@ public class Map
         MaterialProperty prop = new MaterialProperty();
         switch (material)
         {
-            case(Material.stone):
+            case(Material.basalt):
                 prop.density = 1;
                 prop.hardness = 1;
                 prop.solubility = 1;

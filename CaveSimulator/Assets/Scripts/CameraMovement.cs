@@ -13,7 +13,7 @@ public class CameraMovement : MonoBehaviour
     void Start()
     {
         cam.transform.position += new Vector3(mr.map.width / 2, mr.map.height / 2);
-        cam.orthographicSize = mr.map.height / 2;
+        cam.orthographicSize = mr.map.height / 4;
         maxCamSize = mr.map.width / 2;
     }
 
