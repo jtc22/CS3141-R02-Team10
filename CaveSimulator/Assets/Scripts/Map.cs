@@ -48,12 +48,12 @@ public class Map
     
 
     // Constructor
-    public Map(int width, int height, int depth, GameObject[] materials)
+    public Map(int width, int height, int depth)
     {
         this.width = width;
         this.height = height;
         this.depth = depth;
-        this.noiseFrequency = width / Random.Range(5.0f, 35.0f);
+        this.noiseFrequency = width / Random.Range(15.0f, 45.0f);
         mapMatrix = new int[width, height, depth];
         InitializeMap();
     }

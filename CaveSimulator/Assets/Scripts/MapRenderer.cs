@@ -17,7 +17,7 @@ public class MapRenderer : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        map = new Map(600, 400, 10, new GameObject[3] {stone, limeStone, air});
+        map = new Map(750, 200, 1);
         currDepth = map.depth / 2;
 
         createdVoxels = new GameObject[map.width, map.height, map.depth];
