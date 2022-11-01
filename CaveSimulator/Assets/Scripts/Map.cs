@@ -20,14 +20,19 @@ public class Map
 
     public enum Material {
         basalt,
-        limeStone,
+        limestone,
+        sandstone,
+        dolomite,
+        granite,
+        water,
         air
     }
 
-    private struct MaterialProperty {
-        public int density;
-        public int hardness;
-        public int solubility;
+    public struct MaterialProperty {
+        public string name;
+        public float density;
+        public float hardness;
+        public float solubility;
         public Color color;
     }
 
@@ -48,7 +53,7 @@ public class Map
         this.width = width;
         this.height = height;
         this.depth = depth;
-        this.noiseFrequency = width / 20f;
+        this.noiseFrequency = width / Random.Range(5.0f, 35.0f);
         mapMatrix = new int[width, height, depth];
         InitializeMap();
     }
@@ -89,8 +94,7 @@ public class Map
                 {
                     float divisor = Mathf.Max(width, height, depth);
                     float noise = Mathf.Abs(perlinNoise.get3DPerlinNoise(new Vector3((float)x / divisor, (float)y / divisor, (float)z / divisor), noiseFrequency));
-                    int material = (int)Mathf.Round(noise * 3);
-                    if (material > 2) material = 2;
+                    int material = (int)(noise * numMaterials());
                     MaterialProperty mat = getMaterialProperties((Material) material);
                     mapMatrix[x, y, z] = material;
                     materialTextureLayers[z, material].SetPixel(x, y, mat.color);
@@ -113,30 +117,62 @@ public class Map
         return System.Enum.GetNames(typeof(Material)).Length;
     }
 
-    private MaterialProperty getMaterialProperties(Material material){
+    public static MaterialProperty getMaterialProperties(Material material){
         MaterialProperty prop = new MaterialProperty();
         switch (material)
         {
             case(Material.basalt):
-                prop.density = 1;
+                prop.name = "Basalt";
+                prop.density = 3f;
                 prop.hardness = 1;
                 prop.solubility = 1;
-                prop.color = new Color(0.77f, 0.78f, 0.79f, 1);
+                prop.color = new Color(.380f, .412f, .424f, 1);
                 return prop;
-            case(Material.limeStone):
-                prop.density = 1;
+            case(Material.limestone):
+                prop.name = "Limestone";
+                prop.density = 2f; // 1.5-2.71 g/cm^3
                 prop.hardness = 1;
                 prop.solubility = 1;
                 prop.color = new Color(0.74f, 0.74f, 0.56f, 1);
                 return prop;
-            case(Material.air):
-                prop.density = 1;
+            case (Material.sandstone):
+                prop.name = "Sandstone";
+                prop.density = 2.3f; // 2.0-2.6
                 prop.hardness = 1;
                 prop.solubility = 1;
-                prop.color = new Color(0.32f, 0.32f, 0.32f, 1);
+                prop.color = new Color(.698f, .565f, .510f, 1);
+                return prop;
+            case (Material.dolomite):
+                prop.name = "Dolomite";
+                prop.density = 2.84f; // Avg
+                prop.hardness = 1;
+                prop.solubility = 1;
+                prop.color = new Color(.714f, .702f, .671f, 1);
+                return prop;
+            case (Material.granite):
+                prop.name = "Granite";
+                prop.density = 2.75f; // 2.7-2.8
+                prop.hardness = 1;
+                prop.solubility = 1;
+                prop.color = new Color(.404f, .404f, .404f, 1);
+                return prop;
+            case (Material.water):
+                prop.name = "Water";
+                prop.density = 1.0f;
+                prop.hardness = 1;
+                prop.solubility = 1;
+                prop.color = new Color(0.1f, 0.1f, 0.8f, 1);
+                return prop;
+            case(Material.air):
+                prop.name = "Air";
+                prop.density = 1f;
+                prop.hardness = 1;
+                prop.solubility = 1;
+                prop.color = new Color(0.9f, 0.9f, 1.0f, 1);
                 return prop;
             default:
-                prop.density = 1;
+                prop.name = "nothing";
+                prop.density = 1f;
                 prop.hardness = 1;
                 prop.solubility = 1;
                 prop.color = new Color(0.0f, 0.0f, 0.0f, 0.0f);

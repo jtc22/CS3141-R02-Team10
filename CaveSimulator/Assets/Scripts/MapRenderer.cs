@@ -17,7 +17,7 @@ public class MapRenderer : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        map = new Map(300, 200, 1, new GameObject[3] {stone, limeStone, air});
+        map = new Map(600, 400, 10, new GameObject[3] {stone, limeStone, air});
         currDepth = map.depth / 2;
 
         createdVoxels = new GameObject[map.width, map.height, map.depth];
@@ -27,7 +27,7 @@ public class MapRenderer : MonoBehaviour
         // Create the gameobjects requires to hold the textures of the generated map
         for(int i = 0; i < map.numMaterials(); i++)
         {
-            typeHolders[i] = new GameObject("Material_" + (Map.Material)i); // + map.materialMakeUp[i].name);
+            typeHolders[i] = new GameObject(Map.getMaterialProperties((Map.Material)i).name); // + map.materialMakeUp[i].name);
             typeHolders[i].transform.position = new Vector3(map.width/2, map.height/2, 0);
             typeHolders[i].transform.parent = this.transform;
             typeHolders[i].AddComponent<SpriteRenderer>();

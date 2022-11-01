@@ -36,6 +36,7 @@ public class MineralHover : MonoBehaviour
                 
     }
 
+    // TODO rework this, probably should be calculated in the map class for better accuracy and faster speeds
     public float getPercentage()
     {
         Color32[] pixs = tex.GetPixels32();
