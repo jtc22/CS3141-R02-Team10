@@ -14,9 +14,7 @@ public class Map
     // TODO enum for material type
     // TODO getAttributes(enum) for material 
 
-
     // TODO Generation - map features
-    // TODO Add dolomite, sandstone, and granite
 
     public enum Material {
         basalt,
@@ -42,6 +40,8 @@ public class Map
     public int height { get; }
     public int depth { get; }
     public Texture2D[,] materialTextureLayers { get; set; }
+    public int waterLevel { get; set; }
+    public int waterDepth { get; set; }
 
     // Private variables
     private float noiseFrequency = 1.01f;
@@ -53,7 +53,9 @@ public class Map
         this.width = width;
         this.height = height;
         this.depth = depth;
-        this.noiseFrequency = width / Random.Range(15.0f, 45.0f);
+        this.noiseFrequency = height / Random.Range(25.0f, 55.0f);
+        waterLevel = height / 3;
+        waterDepth = height / 6;
         mapMatrix = new int[width, height, depth];
         InitializeMap();
     }
@@ -85,6 +87,8 @@ public class Map
             }
         }
 
+        float cliffOffset = 0;
+
         // Loop through all points on the map and set the texture value at that map
         for (int z = 0; z < depth; z++)
         {
@@ -92,13 +96,26 @@ public class Map
             {
                 for (int y = 0; y < height; y++)
                 {
-                    float divisor = Mathf.Max(width, height, depth);
-                    float noise = Mathf.Abs(perlinNoise.get3DPerlinNoise(new Vector3((float)x / divisor, (float)y / divisor, (float)z / divisor), noiseFrequency));
-                    int material = (int)(noise * numMaterials());
-                    MaterialProperty mat = getMaterialProperties((Material) material);
-                    mapMatrix[x, y, z] = material;
-                    materialTextureLayers[z, material].SetPixel(x, y, mat.color);
+                    float divisor = height; //Mathf.Max(width, height, depth);
+                    float noise = Mathf.Abs(perlinNoise.get3DPerlinNoise(new Vector3((float)x / (width * 10), (float)y / height, (float)z / (width*10)), noiseFrequency));
+                    Material material = (Material)(int)(noise * (numMaterials()+1));
+
+                    if(y > (sig(0.1f, 200, x + (int)cliffOffset) * height * 0.9))
+                    {
+                        material = Material.air;
+                    }
+
+                    // Set the air to water if its under the water level
+                    if(y <= waterLevel && material == Material.air)
+                    {
+                        material = Material.water;
+                    }
+
+                    MaterialProperty mat = getMaterialProperties(material);
+                    mapMatrix[x, y, z] = (int)material;
+                    materialTextureLayers[z, (int)material].SetPixel(x, y, mat.color);
                 }
+                cliffOffset += Random.Range(-1.5f,1.5f);
             }
         }
 
@@ -163,7 +180,7 @@ public class Map
                 prop.solubility = 1;
                 prop.color = new Color(0.1f, 0.1f, 0.8f, 1);
                 return prop;
-            case(Material.air):
+            case (Material.air):
                 prop.name = "Air";
                 prop.density = 1f;
                 prop.hardness = 1;
@@ -178,6 +195,11 @@ public class Map
                 prop.color = new Color(0.0f, 0.0f, 0.0f, 0.0f);
                 return prop;
         }
+    }
+
+    float sig(float c1, int c2, int x)
+    {
+        return 1/(1 + Mathf.Exp(-1 * c1 * (x - c2)));
     }
 
 }
