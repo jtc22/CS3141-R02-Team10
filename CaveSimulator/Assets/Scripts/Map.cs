@@ -11,7 +11,6 @@ public class Map
     // TODO map parameters (rainfall, temp, elevation, humidity, air pressure/makeup), water table
     // TODO pack into CSV file
     // TODO load map from CSV
-    // TODO enum for material type
     // TODO getAttributes(enum) for material 
 
 
@@ -121,14 +120,14 @@ public class Map
         MaterialProperty prop = new MaterialProperty();
         switch (material)
         {
-            case(Material.basalt):
+            case (Material.basalt):
                 prop.name = "Basalt";
                 prop.density = 3f;
                 prop.hardness = 1;
                 prop.solubility = 1;
                 prop.color = new Color(.380f, .412f, .424f, 1);
                 return prop;
-            case(Material.limestone):
+            case (Material.limestone):
                 prop.name = "Limestone";
                 prop.density = 2f; // 1.5-2.71 g/cm^3
                 prop.hardness = 1;
@@ -163,7 +162,7 @@ public class Map
                 prop.solubility = 1;
                 prop.color = new Color(0.1f, 0.1f, 0.8f, 1);
                 return prop;
-            case(Material.air):
+            case (Material.air):
                 prop.name = "Air";
                 prop.density = 1f;
                 prop.hardness = 1;
