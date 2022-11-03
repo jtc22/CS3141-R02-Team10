@@ -87,8 +87,6 @@ public class Map
             }
         }
 
-        float cliffOffset = 0;
-
         // Loop through all points on the map and set the texture value at that map
         for (int z = 0; z < depth; z++)
         {
@@ -98,9 +96,11 @@ public class Map
                 {
                     float divisor = height; //Mathf.Max(width, height, depth);
                     float noise = Mathf.Abs(perlinNoise.get3DPerlinNoise(new Vector3((float)x / (width * 10), (float)y / height, (float)z / (width*10)), noiseFrequency));
-                    Material material = (Material)(int)(noise * (numMaterials()+1));
+                    Material material = (Material)(int)(noise * (numMaterials()-1));
 
-                    if(y > (sig(0.1f, 200, x + (int)cliffOffset) * height * 0.9))
+                    float cliffFace = sig(0.1f, 150, x) * height * 0.9f; // + (int)(Mathf.PerlinNoise(y, depth) * 25)
+
+                    if(y > cliffFace) // TODO Perlin noise for the offset
                     {
                         material = Material.air;
                     }
@@ -115,8 +115,35 @@ public class Map
                     mapMatrix[x, y, z] = (int)material;
                     materialTextureLayers[z, (int)material].SetPixel(x, y, mat.color);
                 }
-                cliffOffset += Random.Range(-1.5f,1.5f);
             }
+        }
+
+        // Apply the pixel updates to all textures
+        for (int z = 0; z < depth; z++)
+        {
+            for (int mat = 0; mat < numMaterials(); mat++)
+            {
+                materialTextureLayers[z, mat].Apply();
+            }
+        }
+    }
+
+    public void updateMap(HashSet<Vector3> updated)
+    {
+        // Loop through all points on the map and set the texture value at that map
+        foreach(Vector3 pix in updated){
+            int x = (int)pix.x;
+            int y = (int)pix.y;
+            int z = (int)pix.z;
+            Material material = (Material) mapMatrix[x, y, z];
+            // Set the air to water if its under the water level
+            if (y <= waterLevel && material == Material.air)
+            {
+                material = Material.water;
+                mapMatrix[x, y, z] = (int) Material.water;
+            }
+            MaterialProperty mat = getMaterialProperties(material);
+            materialTextureLayers[z, (int)material].SetPixel(x, y, mat.color);
         }
 
         // Apply the pixel updates to all textures
