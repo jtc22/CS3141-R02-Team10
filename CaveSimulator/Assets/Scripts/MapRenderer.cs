@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MapRenderer : MonoBehaviour
-{
-    [SerializeField] public GameObject stone;
-    [SerializeField] public GameObject limeStone;
-    [SerializeField] public GameObject air;
-    
+{    
     public Map map { get; set;}
+    public CaveSimulation caveSim {get; set;}
     private int currDepth;
     private GameObject[,,] createdVoxels;
     private HashSet<Vector3> visibleVoxels = new HashSet<Vector3>();
@@ -17,12 +14,13 @@ public class MapRenderer : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        map = new Map(750, 400, 1);
+        map = new Map(750, 400, 5);
         currDepth = map.depth / 2;
 
         createdVoxels = new GameObject[map.width, map.height, map.depth];
 
         typeHolders = new GameObject[map.numMaterials()];
+        caveSim = transform.GetComponent<CaveSimulation>();
 
         // Create the gameobjects requires to hold the textures of the generated map
         for(int i = 0; i < map.numMaterials(); i++)
@@ -36,7 +34,7 @@ public class MapRenderer : MonoBehaviour
 
         Generation();
     }
-    //comment
+    
     void Update()
     {
         if(Input.mouseScrollDelta.y > 0)
@@ -44,6 +42,7 @@ public class MapRenderer : MonoBehaviour
             if(currDepth < map.depth - 1)
             {
                 currDepth++;
+                caveSim.Erosion();
                 Generation();
             }
         }
@@ -52,6 +51,7 @@ public class MapRenderer : MonoBehaviour
             if (currDepth > 0)
             {
                 currDepth--;
+                caveSim.Erosion();
                 Generation();
             }
         }
