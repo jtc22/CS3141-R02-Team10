@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MaterialProperties;
 
 public class CaveSimulation : MonoBehaviour
 {
@@ -42,19 +43,19 @@ public class CaveSimulation : MonoBehaviour
                         for(int xOff = -1; xOff <= 1; xOff++) {
                             if (x + xOff > map.width - 1 || x + xOff < 0)
                                 continue;
-                            if (map.mapMatrix[x + xOff, y, z] != (int)Map.Material.water && map.mapMatrix[x + xOff, y, z] != (int)Map.Material.air)
+                            if (map.mapMatrix[x + xOff, y, z] != (int)Material.water && map.mapMatrix[x + xOff, y, z] != (int)Map.Material.air)
                                 contactSet.Add(new Vector3(x + xOff, y, z));
                         }
                         for(int yOff = -1; yOff <= 1; yOff++) {
                             if (y + yOff > map.height - 1 || y + yOff < 0)
                                 continue;
-                            if (map.mapMatrix[x, y + yOff, z] != (int)Map.Material.water && map.mapMatrix[x, y + yOff, z] != (int)Map.Material.air)
+                            if (map.mapMatrix[x, y + yOff, z] != (int)Material.water && map.mapMatrix[x, y + yOff, z] != (int)Map.Material.air)
                                 contactSet.Add(new Vector3(x, y + yOff, z));
                         }
                         for(int zOff = -1; zOff <= 1; zOff++) {
                             if (z + zOff > map.depth - 1 || z + zOff < 0)
                                 continue;
-                            if (map.mapMatrix[x, y, z + zOff] != (int)Map.Material.water && map.mapMatrix[x, y, z + zOff] != (int)Map.Material.air)
+                            if (map.mapMatrix[x, y, z + zOff] != (int)Material.water && map.mapMatrix[x, y, z + zOff] != (int)Map.Material.air)
                                 contactSet.Add(new Vector3(x, y, z + zOff));
                         }    
                     }
