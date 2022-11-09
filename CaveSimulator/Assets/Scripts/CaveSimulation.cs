@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using MaterialProperties;
+using static MaterialProperties;
 
 public class CaveSimulation : MonoBehaviour
 {

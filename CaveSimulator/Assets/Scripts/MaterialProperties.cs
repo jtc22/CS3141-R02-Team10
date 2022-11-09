@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public static class MaterialProperties 
 {
     public enum Material {
