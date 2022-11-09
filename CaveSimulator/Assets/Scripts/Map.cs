@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using MaterialProperties;
+using static MaterialProperties;
 
 public class Map
 {
@@ -19,6 +19,7 @@ public class Map
 
     // Public Variables
     public int[,,] mapMatrix { get; set; }
+    public List<Vector3> erosionMap { get; set; }
     public int width { get; }
     public int height { get; }
     public int depth { get; }
@@ -40,6 +41,7 @@ public class Map
         waterLevel = height / 3;
         waterDepth = height / 6;
         mapMatrix = new int[width, height, depth];
+        erosionMap = new List<Vector3>();
         InitializeMap();
     }
 
@@ -79,19 +81,26 @@ public class Map
                 {
                     float divisor = height; //Mathf.Max(width, height, depth);
                     float noise = Mathf.Abs(perlinNoise.get3DPerlinNoise(new Vector3((float)x / (width * 10), (float)y / height, (float)z / (width*10)), noiseFrequency));
-                    Material material = (Material)(int)(noise * (numMaterials()-1));
+                    MaterialProperties.Material material = (MaterialProperties.Material)(int)(noise * (numMaterials()-1));
 
                     float cliffFace = sig(0.1f, 150, x) * height * 0.9f; // + (int)(Mathf.PerlinNoise(y, depth) * 25)
 
+
                     if(y > cliffFace) // TODO Perlin noise for the offset
                     {
-                        material = Material.air;
+                        material = MaterialProperties.Material.air;
                     }
 
                     // Set the air to water if its under the water level
-                    if(y <= waterLevel && material == Material.air)
+                    if(y <= waterLevel && material == MaterialProperties.Material.air)
                     {
-                        material = Material.water;
+                        material = MaterialProperties.Material.water;
+                    }
+
+                    // Add to the matrix that will be erroded
+                    if(y > cliffFace - 60 && y < cliffFace + 20 && y < waterLevel + 40)
+                    {
+                        erosionMap.Add(new Vector3(x, y, z));
                     }
 
                     MaterialProperty mat = getMaterialProperties(material);
@@ -118,12 +127,12 @@ public class Map
             int x = (int)pix.x;
             int y = (int)pix.y;
             int z = (int)pix.z;
-            Material material = (Material) mapMatrix[x, y, z];
+            MaterialProperties.Material material = (MaterialProperties.Material) mapMatrix[x, y, z];
             // Set the air to water if its under the water level
-            if (y <= waterLevel && material == Material.air)
+            if (y <= waterLevel && material == MaterialProperties.Material.air)
             {
-                material = Material.water;
-                mapMatrix[x, y, z] = (int) Material.water;
+                material = MaterialProperties.Material.water;
+                mapMatrix[x, y, z] = (int) MaterialProperties.Material.water;
             }
             MaterialProperty mat = getMaterialProperties(material);
             materialTextureLayers[z, (int)material].SetPixel(x, y, mat.color);
@@ -141,7 +150,7 @@ public class Map
 
     public int numMaterials()
     {
-        return System.Enum.GetNames(typeof(Material)).Length;
+        return System.Enum.GetNames(typeof(MaterialProperties.Material)).Length;
     }
 
     float sig(float c1, int c2, int x)

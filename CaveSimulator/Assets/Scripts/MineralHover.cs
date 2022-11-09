@@ -28,8 +28,13 @@ public class MineralHover : MonoBehaviour
             }
             else
             {
-                string data = "Current Mineral: " + col2d.transform.name + "\n" +
-                                "Makeup: " + (getPercentage() * 100).ToString("F2") + "%\n";
+                MaterialProperties.Material mat = (MaterialProperties.Material) System.Enum.Parse(typeof(MaterialProperties.Material), col2d.transform.name.ToLower());
+                MaterialProperties.MaterialProperty matProp = MaterialProperties.getMaterialProperties(mat);
+                string data = "Current Mineral: " + matProp.name + "\n" +
+                                "Makeup: " + (getPercentage() * 100).ToString("F2") + "%\n" +
+                                "Hardness: " + matProp.hardness + "\n" +
+                                "Density: " + matProp.density + "\n" +
+                                "Soluability: " + matProp.solubility + "\n";
                 MaterialDataUI.ShowMineralData(data);
                 sr.color = new Color(0.9f, .9f, 0.9f, 1);
             }
