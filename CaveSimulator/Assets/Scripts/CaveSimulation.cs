@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using static MaterialProperties;
 using UnityEngine;
+using MaterialProperties;
 
 public class CaveSimulation : MonoBehaviour
 {
