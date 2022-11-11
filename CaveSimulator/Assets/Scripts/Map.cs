@@ -72,10 +72,16 @@ public class Map
             }
         }
 
+        int cliffX = 0;
+
         // Loop through all points on the map and set the texture value at that map
-        for (int z = 0; z < depth; z++)
+        for (int x = 0; x < width; x++)
         {
-            for (int x = 0; x < width; x++)
+            if (Random.Range(0f,1f) > .5){
+                cliffX++;
+            } 
+
+            for (int z = 0; z < depth; z++)
             {
                 for (int y = 0; y < height; y++)
                 {
@@ -83,8 +89,12 @@ public class Map
                     float noise = Mathf.Abs(perlinNoise.get3DPerlinNoise(new Vector3((float)x / (width * 10), (float)y / height, (float)z / (width*10)), noiseFrequency));
                     MaterialProperties.Material material = (MaterialProperties.Material)(int)(noise * (numMaterials()-1));
 
-                    float cliffFace = sig(0.1f, 150, x) * height * 0.9f; // + (int)(Mathf.PerlinNoise(y, depth) * 25)
+                    // int cliffOffset = (int)((Mathf.PerlinNoise(x, y) - .3) * 30);
 
+                    float steepness = 0.1f;
+                    int cliffFaceOffset = 130;
+                    
+                    double cliffFace = sig(steepness, cliffFaceOffset, cliffX) * height * 0.9f;
 
                     if(y > cliffFace) // TODO Perlin noise for the offset
                     {
@@ -156,6 +166,11 @@ public class Map
     float sig(float c1, int c2, int x)
     {
         return 1/(1 + Mathf.Exp(-1 * c1 * (x - c2)));
+
+    }
+
+    float invSig(float c1, int c2, int y){
+        return Mathf.Log(y / (1-y)) / c1 + c2;
     }
 
 }
