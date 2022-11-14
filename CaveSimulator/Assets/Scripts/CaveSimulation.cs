@@ -37,45 +37,12 @@ public class CaveSimulation : MonoBehaviour
                             MaterialProperties.Material material = getMaterial(pixel);
                             MaterialProperties.MaterialProperty matProp = MaterialProperties.getMaterialProperties(material);
 
-                            float fr = (matProp.density * matProp.hardness) / matProp.solubility; // Resistance force
-                            float fw = Random.Range(1.0f, 3.1f) * (pixel.y > map.waterLevel ? Mathf.Exp(-(pixel.y - map.waterLevel) / 10) : 1); // Wave force
-                            float k = 0.5f; // Arbitrary constant
+            float fr = (matProp.density * matProp.hardness) / matProp.solubility; // Resistance force
+            float fw = 5.0f; // Wave force
+            float k = 5.0f; // Arbitrary constant
 
-                            if (erodePixel(pixel, fr, fw, k))
-                            {
-                                pixelsToErode.Add(pixel);
-                            }
-
-                        }
-                    }
-                }
-            }
-        }
-        map.updateMap(map.erosionMap);
-
-        // foreach(Vector3 pixel in pixelsToErode)
-        // {
-        //     MaterialProperties.Material material = getMaterial(pixel);
-        //     MaterialProperties.MaterialProperty matProp = MaterialProperties.getMaterialProperties(material);
-
-        //     float fr = (matProp.density * matProp.hardness) / matProp.solubility; // Resistance force
-        //     float fw = Random.Range(1.0f, 6.0f) * (pixel.y > map.waterLevel ? Mathf.Exp(-(pixel.y - map.waterLevel) / 10) : 1); // Wave force
-        //     float k = 1.0f; // Arbitrary constant
-
-        //     if(erodePixel(pixel, fr, fw, k))
-        //     {
-        //         map.erosionMap.Add(pixel + new Vector3(1, 0, 0));
-        //         map.erosionMap.Add(pixel + new Vector3(0, 1, 0));
-        //     }
-        // }
-    }
-
-    bool erodePixel(Vector3 pixel, float fr, float fw, float k)
-    {
-        if (k * Mathf.Log(fw / fr) > 0)
-        {
-            map.mapMatrix[(int)pixel.x, (int)pixel.y, (int)pixel.z] = (int)MaterialProperties.Material.air;
-            return true;
+            if(k * Mathf.Log(fw/fr) > 0)
+                map.mapMatrix[(int)pixel.x, (int)pixel.y, (int)pixel.z] = (int)MaterialProperties.Material.air;
         }
         return false;
     }
@@ -84,4 +51,9 @@ public class CaveSimulation : MonoBehaviour
     {
         return (MaterialProperties.Material) map.mapMatrix[(int)pixel.x, (int)pixel.y, (int)pixel.z];
     }
+    public double kCalculation(double AverageResistantForce ,  double ResistanceF, double WaveF   ) {  //Method to calculate k
+            return ((AverageResistantForce)/(Mathf.Log(WaveF/ResistanceF)));
+    }
+
+    
 }
