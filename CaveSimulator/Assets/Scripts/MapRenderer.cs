@@ -42,7 +42,6 @@ public class MapRenderer : MonoBehaviour
             if(currDepth < map.depth - 1)
             {
                 currDepth++;
-                caveSim.Erosion();
                 Generation();
             }
         }
@@ -51,7 +50,6 @@ public class MapRenderer : MonoBehaviour
             if (currDepth > 0)
             {
                 currDepth--;
-                caveSim.Erosion();
                 Generation();
             }
         }

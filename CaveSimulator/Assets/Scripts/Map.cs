@@ -19,13 +19,12 @@ public class Map
 
     // Public Variables
     public int[,,] mapMatrix { get; set; }
-    public List<Vector3> erosionMap { get; set; }
+    public HashSet<Vector3> erosionMap { get; set; }
     public int width { get; }
     public int height { get; }
     public int depth { get; }
     public Texture2D[,] materialTextureLayers { get; set; }
     public int waterLevel { get; set; }
-    public int waterDepth { get; set; }
 
     // Private variables
     private float noiseFrequency = 1.01f;
@@ -39,9 +38,8 @@ public class Map
         this.depth = depth;
         this.noiseFrequency = height / Random.Range(25.0f, 55.0f);
         waterLevel = height / 3;
-        waterDepth = height / 6;
         mapMatrix = new int[width, height, depth];
-        erosionMap = new List<Vector3>();
+        erosionMap = new HashSet<Vector3>();
         InitializeMap();
     }
 
@@ -108,7 +106,7 @@ public class Map
                     }
 
                     // Add to the matrix that will be erroded
-                    if(y > cliffFace - 60 && y < cliffFace + 20 && y < waterLevel + 40)
+                    if(y < cliffFace && x < cliffFaceOffset + 200 && y < waterLevel + 80)
                     {
                         erosionMap.Add(new Vector3(x, y, z));
                     }
