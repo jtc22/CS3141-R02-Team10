@@ -25,6 +25,7 @@ public class Map
     public int depth { get; }
     public Texture2D[,] materialTextureLayers { get; set; }
     public int waterLevel { get; set; }
+    public int age {get; set;}
 
     // Private variables
     private float noiseFrequency = 1.01f;
@@ -37,6 +38,7 @@ public class Map
         this.height = height;
         this.depth = depth;
         this.noiseFrequency = height / Random.Range(25.0f, 55.0f);
+        age = 450;
         waterLevel = height / 3;
         mapMatrix = new int[width, height, depth];
         erosionMap = new HashSet<Vector3>();
@@ -99,16 +101,21 @@ public class Map
                         material = MaterialProperties.Material.air;
                     }
 
+                    // Add to the matrix that will be erroded
+                    divisor = Mathf.Max(width, height);
+                    if( y < cliffFace && 
+                        y < waterLevel + (Mathf.PerlinNoise((float)x/(width*0.12f), (float)z/(width*0.12f)) * 70) && 
+                        perlinNoise.get3DPerlinNoise(new Vector3((float)x / (divisor), (float)y / divisor, (float)z / (divisor)), noiseFrequency*2.0f) < 0.04f &&
+                        x < (-0.05f * Mathf.Pow((y - waterLevel), 2) + cliffFaceOffset + age + (Mathf.PerlinNoise((float)x / (width * 0.02f), (float)z / (width * 0.02f)) * 100)))
+                    {
+                        erosionMap.Add(new Vector3(x, y, z));
+                        material = MaterialProperties.Material.air;
+                    }
+
                     // Set the air to water if its under the water level
                     if(y <= waterLevel && material == MaterialProperties.Material.air)
                     {
                         material = MaterialProperties.Material.water;
-                    }
-
-                    // Add to the matrix that will be erroded
-                    if(y < cliffFace && x < cliffFaceOffset + 200 && y < waterLevel + 80)
-                    {
-                        erosionMap.Add(new Vector3(x, y, z));
                     }
 
                     MaterialProperty mat = getMaterialProperties(material);

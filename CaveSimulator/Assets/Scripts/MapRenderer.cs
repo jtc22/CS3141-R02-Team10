@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MapRenderer : MonoBehaviour
 {    
     public Map map { get; set;}
     public CaveSimulation caveSim {get; set;}
+    public Slider depthSlider;
     private int currDepth;
     private GameObject[,,] createdVoxels;
     private HashSet<Vector3> visibleVoxels = new HashSet<Vector3>();
@@ -14,7 +16,8 @@ public class MapRenderer : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        map = new Map(750, 400, 5);
+        map = new Map(750, 400, 30);
+        depthSlider.maxValue = 30 - 1;
         currDepth = map.depth / 2;
 
         createdVoxels = new GameObject[map.width, map.height, map.depth];
@@ -53,6 +56,7 @@ public class MapRenderer : MonoBehaviour
                 Generation();
             }
         }
+        depthSlider.value = currDepth;
     }
 
     void Generation()
