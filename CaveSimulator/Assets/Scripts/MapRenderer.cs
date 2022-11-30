@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static MaterialProperties;
 
 public class MapRenderer : MonoBehaviour
 {    
@@ -28,7 +29,7 @@ public class MapRenderer : MonoBehaviour
         // Create the gameobjects requires to hold the textures of the generated map
         for(int i = 0; i < map.numMaterials(); i++)
         {
-            typeHolders[i] = new GameObject(MaterialProperties.getMaterialProperties((MaterialProperties.Material)i).name); // + map.materialMakeUp[i].name);
+            typeHolders[i] = new GameObject(getMaterialProperties((CaveMat)i).name); // + map.materialMakeUp[i].name);
             typeHolders[i].transform.position = new Vector3(map.width/2, map.height/2, 0);
             typeHolders[i].transform.parent = this.transform;
             typeHolders[i].AddComponent<SpriteRenderer>();

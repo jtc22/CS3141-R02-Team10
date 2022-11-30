@@ -18,7 +18,7 @@ public class Map
 
 
     // Public Variables
-    public int[,,] mapMatrix { get; set; }
+    public CaveMat[,,] mapMatrix { get; set; }
     public HashSet<Vector3> erosionMap { get; set; }
     public int width { get; }
     public int height { get; }
@@ -40,7 +40,7 @@ public class Map
         this.noiseFrequency = height / Random.Range(25.0f, 55.0f);
         age = 450;
         waterLevel = height / 3;
-        mapMatrix = new int[width, height, depth];
+        mapMatrix = new CaveMat[width, height, depth];
         erosionMap = new HashSet<Vector3>();
         InitializeMap();
     }
@@ -87,7 +87,7 @@ public class Map
                 {
                     float divisor = height; //Mathf.Max(width, height, depth);
                     float noise = Mathf.Abs(perlinNoise.get3DPerlinNoise(new Vector3((float)x / (width * 10), (float)y / height, (float)z / (width*10)), noiseFrequency));
-                    MaterialProperties.Material material = (MaterialProperties.Material)(int)(noise * (numMaterials()-1));
+                    CaveMat material = (CaveMat)(int)(noise * (numMaterials()-1));
 
                     // int cliffOffset = (int)((Mathf.PerlinNoise(x, y) - .3) * 30);
 
@@ -98,28 +98,33 @@ public class Map
 
                     if(y > cliffFace) // TODO Perlin noise for the offset
                     {
-                        material = MaterialProperties.Material.air;
+                        material = CaveMat.air;
                     }
 
-                    // Add to the matrix that will be erroded
+                    // Add to the matrix that will be eroded
                     divisor = Mathf.Max(width, height);
-                    if( y < cliffFace && 
+                    if( // If y is beneath the face of the cliff
+                        y < cliffFace && 
+                        // If y is beneath or around the water level
                         y < waterLevel + (Mathf.PerlinNoise((float)x/(width*0.12f), (float)z/(width*0.12f)) * 70) && 
-                        perlinNoise.get3DPerlinNoise(new Vector3((float)x / (divisor), (float)y / divisor, (float)z / (divisor)), noiseFrequency*2.0f) < 0.04f &&
-                        x < (-0.05f * Mathf.Pow((y - waterLevel), 2) + cliffFaceOffset + age + (Mathf.PerlinNoise((float)x / (width * 0.02f), (float)z / (width * 0.02f)) * 100)))
+                        // Generating small pockets of air, adding randomness
+                        perlinNoise.get3DPerlinNoise(new Vector3((float)x / (divisor), (float)y / divisor, (float)z / (divisor)), noiseFrequency*2.0f) < (0.08f - (getHardness(mapMatrix[x,y,z]) / 100)) &&
+                        // Comparing x against age
+                        x < (-0.05f * Mathf.Pow((y - waterLevel), 2) + cliffFaceOffset + age + (Mathf.PerlinNoise((float)x / (width * 0.02f), (float)z / (width * 0.02f)) * 100))
+                        )                        
                     {
                         erosionMap.Add(new Vector3(x, y, z));
-                        material = MaterialProperties.Material.air;
+                        material = CaveMat.air;
                     }
 
                     // Set the air to water if its under the water level
-                    if(y <= waterLevel && material == MaterialProperties.Material.air)
+                    if(y <= waterLevel && material == CaveMat.air)
                     {
-                        material = MaterialProperties.Material.water;
+                        material = CaveMat.water;
                     }
 
                     MaterialProperty mat = getMaterialProperties(material);
-                    mapMatrix[x, y, z] = (int)material;
+                    mapMatrix[x, y, z] = material;
                     materialTextureLayers[z, (int)material].SetPixel(x, y, mat.color);
                 }
             }
@@ -142,12 +147,12 @@ public class Map
             int x = (int)pix.x;
             int y = (int)pix.y;
             int z = (int)pix.z;
-            MaterialProperties.Material material = (MaterialProperties.Material) mapMatrix[x, y, z];
+            CaveMat material = mapMatrix[x, y, z];
             // Set the air to water if its under the water level
-            if (y <= waterLevel && material == MaterialProperties.Material.air)
+            if (y <= waterLevel && material == CaveMat.air)
             {
-                material = MaterialProperties.Material.water;
-                mapMatrix[x, y, z] = (int) MaterialProperties.Material.water;
+                material = CaveMat.water;
+                mapMatrix[x, y, z] = CaveMat.water;
             }
             MaterialProperty mat = getMaterialProperties(material);
             materialTextureLayers[z, (int)material].SetPixel(x, y, mat.color);
@@ -165,7 +170,7 @@ public class Map
 
     public int numMaterials()
     {
-        return System.Enum.GetNames(typeof(MaterialProperties.Material)).Length;
+        return System.Enum.GetNames(typeof(CaveMat)).Length;
     }
 
     float sig(float c1, int c2, int x)
