@@ -6,17 +6,6 @@ using static MaterialProperties;
 public class Map
 {
 
-    // TODO getlayer()
-    // TODO edit functions
-    // TODO material class
-    // TODO map parameters (rainfall, temp, elevation, humidity, air pressure/makeup), water table
-    // TODO pack into CSV file
-    // TODO load map from CSV
-    // TODO getAttributes(enum) for material 
-
-    // TODO Generation - map features
-
-
     // Public Variables
     public CaveMat[,,] mapMatrix { get; set; }
     public HashSet<Vector3> erosionMap { get; set; }
@@ -38,6 +27,7 @@ public class Map
         this.height = height;
         this.depth = depth;
         this.noiseFrequency = height / Random.Range(25.0f, 55.0f);
+        // Age is a factor when creating the cave
         age = 450;
         waterLevel = height / 3;
         mapMatrix = new CaveMat[width, height, depth];
@@ -45,7 +35,7 @@ public class Map
         InitializeMap();
     }
 
-    // This where all the cool stuff happens eventually
+    // Creation of the map
     void InitializeMap()
     {
         // Create all of the textures needed for the map
@@ -77,6 +67,7 @@ public class Map
         // Loop through all points on the map and set the texture value at that map
         for (int x = 0; x < width; x++)
         {
+            // To use for randomizing the cliff face
             if (Random.Range(0f,1f) > .5){
                 cliffX++;
             } 
@@ -89,14 +80,13 @@ public class Map
                     float noise = Mathf.Abs(perlinNoise.get3DPerlinNoise(new Vector3((float)x / (width * 10), (float)y / height, (float)z / (width*10)), noiseFrequency));
                     CaveMat material = (CaveMat)(int)(noise * (numMaterials()-1));
 
-                    // int cliffOffset = (int)((Mathf.PerlinNoise(x, y) - .3) * 30);
-
                     float steepness = 0.1f;
                     int cliffFaceOffset = 130;
                     
                     double cliffFace = sig(steepness, cliffFaceOffset, cliffX) * height * 0.9f;
 
-                    if(y > cliffFace) // TODO Perlin noise for the offset
+                    // Set material to air if is above the sigmoid function 
+                    if(y > cliffFace) 
                     {
                         material = CaveMat.air;
                     }
@@ -173,14 +163,10 @@ public class Map
         return System.Enum.GetNames(typeof(CaveMat)).Length;
     }
 
+    // Sigmoid function for generating the cliff face
     float sig(float c1, int c2, int x)
     {
         return 1/(1 + Mathf.Exp(-1 * c1 * (x - c2)));
 
     }
-
-    float invSig(float c1, int c2, int y){
-        return Mathf.Log(y / (1-y)) / c1 + c2;
-    }
-
 }

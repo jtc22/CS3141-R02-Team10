@@ -30,7 +30,7 @@ public class MineralHover : MonoBehaviour
             else
             {
                 CaveMat mat = (CaveMat) System.Enum.Parse(typeof(CaveMat), col2d.transform.name.ToLower());
-                MaterialProperty matProp = MaterialProperties.getMaterialProperties(mat);
+                MaterialProperty matProp = getMaterialProperties(mat);
                 string data = "Current Mineral: " + matProp.name + "\n" +
                                 "Makeup: " + (getPercentage() * 100).ToString("F2") + "%\n" +
                                 "Hardness: " + matProp.hardness + "\n" +

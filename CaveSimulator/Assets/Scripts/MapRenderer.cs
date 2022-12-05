@@ -41,6 +41,7 @@ public class MapRenderer : MonoBehaviour
     
     void Update()
     {
+        // Mouse scroll to move layers in the map
         if(Input.mouseScrollDelta.y > 0)
         {
             if(currDepth < map.depth - 1)
@@ -60,10 +61,12 @@ public class MapRenderer : MonoBehaviour
         depthSlider.value = currDepth;
     }
 
+    // Generate the 2d slice of the map at currDepth
     void Generation()
     {
         int z = currDepth;
 
+        // For each material, render its tecture onto screen
         for (int i = 0; i < map.numMaterials(); i++)
         {
             SpriteRenderer sr = typeHolders[i].GetComponent<SpriteRenderer>();

@@ -22,6 +22,7 @@ public static class MaterialProperties
             public Color color;
     }
 
+    // Switch statement returning the material properties for the given material
     public static MaterialProperty getMaterialProperties(CaveMat material){
             MaterialProperty prop = new MaterialProperty();
             switch (material)

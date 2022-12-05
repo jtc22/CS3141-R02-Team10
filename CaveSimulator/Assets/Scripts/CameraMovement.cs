@@ -12,6 +12,7 @@ public class CameraMovement : MonoBehaviour
 
     void Start()
     {
+        // Moves camera from the corner to the center of the map
         cam.transform.position += new Vector3(mr.map.width / 2, mr.map.height / 2);
         cam.orthographicSize = mr.map.height / 4;
         maxCamSize = mr.map.width / 2;
@@ -21,7 +22,6 @@ public class CameraMovement : MonoBehaviour
     void Update()
     {
         PanCamera();
-
     }
 
     private void PanCamera()
@@ -40,10 +40,13 @@ public class CameraMovement : MonoBehaviour
             }
         }
 
+        // If mouse is unclicked, move camera
         if (Input.GetMouseButton(0))
         {
+            // Get new mouse position
             Vector3 difference = dragOrigin - cam.ScreenToWorldPoint(Input.mousePosition);
 
+            // Set camera to new position
             cam.transform.position += difference;
         }
 
