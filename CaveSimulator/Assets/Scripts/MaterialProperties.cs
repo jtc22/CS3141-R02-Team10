@@ -5,10 +5,10 @@ using UnityEngine;
 public static class MaterialProperties 
 {
     public enum Material {
-        basalt,
         limestone,
-        sandstone,
         dolomite,
+        basalt,
+        sandstone,
         granite,
         water,
         air

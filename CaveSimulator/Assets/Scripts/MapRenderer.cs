@@ -16,7 +16,7 @@ public class MapRenderer : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        map = new Map(750, 400, 30);
+        map = new Map(800, 600, 30, 450, 600/3);
         depthSlider.maxValue = 30 - 1;
         currDepth = map.depth / 2;
 

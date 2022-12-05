@@ -5,18 +5,6 @@ using static MaterialProperties;
 
 public class Map
 {
-
-    // TODO getlayer()
-    // TODO edit functions
-    // TODO material class
-    // TODO map parameters (rainfall, temp, elevation, humidity, air pressure/makeup), water table
-    // TODO pack into CSV file
-    // TODO load map from CSV
-    // TODO getAttributes(enum) for material 
-
-    // TODO Generation - map features
-
-
     // Public Variables
     public int[,,] mapMatrix { get; set; }
     public HashSet<Vector3> erosionMap { get; set; }
@@ -32,21 +20,21 @@ public class Map
     
 
     // Constructor
-    public Map(int width, int height, int depth)
+    public Map(int width, int height, int depth, int age, int waterLevel)
     {
         this.width = width;
         this.height = height;
         this.depth = depth;
         this.noiseFrequency = height / Random.Range(25.0f, 55.0f);
-        age = 450;
-        waterLevel = height / 3;
+        this.age = age;
+        this.waterLevel = waterLevel;
         mapMatrix = new int[width, height, depth];
         erosionMap = new HashSet<Vector3>();
         InitializeMap();
     }
 
     // This where all the cool stuff happens eventually
-    void InitializeMap()
+    public void InitializeMap()
     {
         // Create all of the textures needed for the map
         materialTextureLayers = new Texture2D[depth, numMaterials()];
@@ -85,30 +73,30 @@ public class Map
             {
                 for (int y = 0; y < height; y++)
                 {
-                    float divisor = height; //Mathf.Max(width, height, depth);
-                    float noise = Mathf.Abs(perlinNoise.get3DPerlinNoise(new Vector3((float)x / (width * 10), (float)y / height, (float)z / (width*10)), noiseFrequency));
+                    float divisor = height;
+                    float noise = Mathf.Abs(perlinNoise.get3DPerlinNoise(new Vector3((float)x / (width * 5), (float)y / height, (float)z / (width * 5)), noiseFrequency));
                     MaterialProperties.Material material = (MaterialProperties.Material)(int)(noise * (numMaterials()-1));
-
-                    // int cliffOffset = (int)((Mathf.PerlinNoise(x, y) - .3) * 30);
 
                     float steepness = 0.1f;
                     int cliffFaceOffset = 130;
                     
-                    double cliffFace = sig(steepness, cliffFaceOffset, cliffX) * height * 0.9f;
+                    double cliffFace = sig(steepness, cliffFaceOffset, cliffX) * height * 0.87f + height*0.1f;
 
-                    if(y > cliffFace) // TODO Perlin noise for the offset
+                    if(y > cliffFace)
                     {
                         material = MaterialProperties.Material.air;
                     }
 
+                    float erosionNoise = (Mathf.PerlinNoise((float)x / (width * 0.02f), (float)z / (width * 0.02f)) * 0.4f + 0.4f) * (Mathf.Pow(0.975f, Mathf.Abs(waterLevel-y)));
+
                     // Add to the matrix that will be erroded
                     divisor = Mathf.Max(width, height);
                     if( y < cliffFace && 
-                        y < waterLevel + (Mathf.PerlinNoise((float)x/(width*0.12f), (float)z/(width*0.12f)) * 70) && 
-                        perlinNoise.get3DPerlinNoise(new Vector3((float)x / (divisor), (float)y / divisor, (float)z / (divisor)), noiseFrequency*2.0f) < 0.04f &&
-                        x < (-0.05f * Mathf.Pow((y - waterLevel), 2) + cliffFaceOffset + age + (Mathf.PerlinNoise((float)x / (width * 0.02f), (float)z / (width * 0.02f)) * 100)))
+                        y < waterLevel + (Mathf.PerlinNoise((float)x/(width*0.12f), (float)z/(width*0.12f)) * age/3.5) && 
+                        noise < erosionNoise && //(Random.Range(0.45f, 0.6f)) && 
+                        // perlinNoise.get3DPerlinNoise(new Vector3((float)x / (divisor), (float)y / divisor, (float)z / (divisor)), noiseFrequency*1.0f) < 0.3f &&
+                        x < (-((float)1/(age / 10) * 1.8f) * Mathf.Pow((y - waterLevel), 2) + cliffFaceOffset + age + (Mathf.PerlinNoise((float)x / (width * 0.02f), (float)z / (width * 0.02f)) * 60)))
                     {
-                        erosionMap.Add(new Vector3(x, y, z));
                         material = MaterialProperties.Material.air;
                     }
 
