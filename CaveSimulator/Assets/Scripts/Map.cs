@@ -6,7 +6,7 @@ using static MaterialProperties;
 public class Map
 {
     // Public Variables
-    public int[,,] mapMatrix { get; set; }
+    public CaveMat[,,] mapMatrix { get; set; }
     public HashSet<Vector3> erosionMap { get; set; }
     public int width { get; }
     public int height { get; }
@@ -26,15 +26,16 @@ public class Map
         this.height = height;
         this.depth = depth;
         this.noiseFrequency = height / Random.Range(25.0f, 55.0f);
-        this.age = age;
-        this.waterLevel = waterLevel;
-        mapMatrix = new int[width, height, depth];
+        // Age is a factor when creating the cave
+        age = 450;
+        waterLevel = height / 3;
+        mapMatrix = new CaveMat[width, height, depth];
         erosionMap = new HashSet<Vector3>();
         InitializeMap();
     }
 
-    // This where all the cool stuff happens eventually
-    public void InitializeMap()
+    // Creation of the map
+    void InitializeMap()
     {
         // Create all of the textures needed for the map
         materialTextureLayers = new Texture2D[depth, numMaterials()];
@@ -65,6 +66,7 @@ public class Map
         // Loop through all points on the map and set the texture value at that map
         for (int x = 0; x < width; x++)
         {
+            // To use for randomizing the cliff face
             if (Random.Range(0f,1f) > .5){
                 cliffX++;
             } 
@@ -73,18 +75,19 @@ public class Map
             {
                 for (int y = 0; y < height; y++)
                 {
-                    float divisor = height;
-                    float noise = Mathf.Abs(perlinNoise.get3DPerlinNoise(new Vector3((float)x / (width * 5), (float)y / height, (float)z / (width * 5)), noiseFrequency));
-                    MaterialProperties.Material material = (MaterialProperties.Material)(int)(noise * (numMaterials()-1));
+                    float divisor = height; //Mathf.Max(width, height, depth);
+                    float noise = Mathf.Abs(perlinNoise.get3DPerlinNoise(new Vector3((float)x / (width * 10), (float)y / height, (float)z / (width*10)), noiseFrequency));
+                    CaveMat material = (CaveMat)(int)(noise * (numMaterials()-1));
 
                     float steepness = 0.1f;
                     int cliffFaceOffset = 130;
                     
                     double cliffFace = sig(steepness, cliffFaceOffset, cliffX) * height * 0.87f + height*0.1f;
 
-                    if(y > cliffFace)
+                    // Set material to air if is above the sigmoid function 
+                    if(y > cliffFace) 
                     {
-                        material = MaterialProperties.Material.air;
+                        material = CaveMat.air;
                     }
 
                     float erosionNoise = (Mathf.PerlinNoise((float)x / (width * 0.02f), (float)z / (width * 0.02f)) * 0.4f + 0.4f) * (Mathf.Pow(0.975f, Mathf.Abs(waterLevel-y)));
@@ -101,13 +104,13 @@ public class Map
                     }
 
                     // Set the air to water if its under the water level
-                    if(y <= waterLevel && material == MaterialProperties.Material.air)
+                    if(y <= waterLevel && material == CaveMat.air)
                     {
-                        material = MaterialProperties.Material.water;
+                        material = CaveMat.water;
                     }
 
                     MaterialProperty mat = getMaterialProperties(material);
-                    mapMatrix[x, y, z] = (int)material;
+                    mapMatrix[x, y, z] = material;
                     materialTextureLayers[z, (int)material].SetPixel(x, y, mat.color);
                 }
             }
@@ -130,12 +133,12 @@ public class Map
             int x = (int)pix.x;
             int y = (int)pix.y;
             int z = (int)pix.z;
-            MaterialProperties.Material material = (MaterialProperties.Material) mapMatrix[x, y, z];
+            CaveMat material = mapMatrix[x, y, z];
             // Set the air to water if its under the water level
-            if (y <= waterLevel && material == MaterialProperties.Material.air)
+            if (y <= waterLevel && material == CaveMat.air)
             {
-                material = MaterialProperties.Material.water;
-                mapMatrix[x, y, z] = (int) MaterialProperties.Material.water;
+                material = CaveMat.water;
+                mapMatrix[x, y, z] = CaveMat.water;
             }
             MaterialProperty mat = getMaterialProperties(material);
             materialTextureLayers[z, (int)material].SetPixel(x, y, mat.color);
@@ -153,17 +156,13 @@ public class Map
 
     public int numMaterials()
     {
-        return System.Enum.GetNames(typeof(MaterialProperties.Material)).Length;
+        return System.Enum.GetNames(typeof(CaveMat)).Length;
     }
 
+    // Sigmoid function for generating the cliff face
     float sig(float c1, int c2, int x)
     {
         return 1/(1 + Mathf.Exp(-1 * c1 * (x - c2)));
 
     }
-
-    float invSig(float c1, int c2, int y){
-        return Mathf.Log(y / (1-y)) / c1 + c2;
-    }
-
 }

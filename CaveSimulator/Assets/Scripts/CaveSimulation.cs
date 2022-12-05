@@ -18,4 +18,9 @@ public class CaveSimulation : MonoBehaviour
         map.age += 15;
         map.InitializeMap();
     }
+    public double kCalculation(double AverageResistantForce ,  double ResistanceF, double WaveF   ) {  //Method to calculate k
+            return ((AverageResistantForce)/(Mathf.Log(WaveF/ResistanceF)));
+    }
+
+    
 }

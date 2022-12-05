@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static MaterialProperties;
 
 public class MineralHover : MonoBehaviour
 {
@@ -28,8 +29,8 @@ public class MineralHover : MonoBehaviour
             }
             else
             {
-                MaterialProperties.Material mat = (MaterialProperties.Material) System.Enum.Parse(typeof(MaterialProperties.Material), col2d.transform.name.ToLower());
-                MaterialProperties.MaterialProperty matProp = MaterialProperties.getMaterialProperties(mat);
+                CaveMat mat = (CaveMat) System.Enum.Parse(typeof(CaveMat), col2d.transform.name.ToLower());
+                MaterialProperty matProp = getMaterialProperties(mat);
                 string data = "Current Mineral: " + matProp.name + "\n" +
                                 "Makeup: " + (getPercentage() * 100).ToString("F2") + "%\n" +
                                 "Hardness: " + matProp.hardness + "\n" +
