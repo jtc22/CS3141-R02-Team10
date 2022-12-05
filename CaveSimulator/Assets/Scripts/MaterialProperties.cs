@@ -5,7 +5,6 @@ using UnityEngine;
 public static class MaterialProperties 
 {
     public enum CaveMat {
-        basalt,
         limestone,
         dolomite,
         basalt,

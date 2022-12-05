@@ -27,15 +27,15 @@ public class Map
         this.depth = depth;
         this.noiseFrequency = height / Random.Range(25.0f, 55.0f);
         // Age is a factor when creating the cave
-        age = 450;
-        waterLevel = height / 3;
+        this.age = age;
+        this.waterLevel = waterLevel;
         mapMatrix = new CaveMat[width, height, depth];
         erosionMap = new HashSet<Vector3>();
         InitializeMap();
     }
 
     // Creation of the map
-    void InitializeMap()
+    public void InitializeMap()
     {
         // Create all of the textures needed for the map
         materialTextureLayers = new Texture2D[depth, numMaterials()];
@@ -76,7 +76,7 @@ public class Map
                 for (int y = 0; y < height; y++)
                 {
                     float divisor = height; //Mathf.Max(width, height, depth);
-                    float noise = Mathf.Abs(perlinNoise.get3DPerlinNoise(new Vector3((float)x / (width * 10), (float)y / height, (float)z / (width*10)), noiseFrequency));
+                    float noise = Mathf.Abs(perlinNoise.get3DPerlinNoise(new Vector3((float)x / (width * 5), (float)y / height, (float)z / (width*5)), noiseFrequency));
                     CaveMat material = (CaveMat)(int)(noise * (numMaterials()-1));
 
                     float steepness = 0.1f;
@@ -100,7 +100,7 @@ public class Map
                         // perlinNoise.get3DPerlinNoise(new Vector3((float)x / (divisor), (float)y / divisor, (float)z / (divisor)), noiseFrequency*1.0f) < 0.3f &&
                         x < (-((float)1/(age / 10) * 1.8f) * Mathf.Pow((y - waterLevel), 2) + cliffFaceOffset + age + (Mathf.PerlinNoise((float)x / (width * 0.02f), (float)z / (width * 0.02f)) * 60)))
                     {
-                        material = MaterialProperties.Material.air;
+                        material = CaveMat.air;
                     }
 
                     // Set the air to water if its under the water level
