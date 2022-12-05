@@ -17,7 +17,5 @@ public class CaveSimulation : MonoBehaviour
     {
         map.age += 15;
         map.InitializeMap();
-    }
-
-    
+    }    
 }

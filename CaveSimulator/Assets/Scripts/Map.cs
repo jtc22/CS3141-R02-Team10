@@ -7,7 +7,6 @@ public class Map
 {
     // Public Variables
     public CaveMat[,,] mapMatrix { get; set; }
-    public HashSet<Vector3> erosionMap { get; set; }
     public int width { get; }
     public int height { get; }
     public int depth { get; }
@@ -30,7 +29,6 @@ public class Map
         this.age = age;
         this.waterLevel = waterLevel;
         mapMatrix = new CaveMat[width, height, depth];
-        erosionMap = new HashSet<Vector3>();
         InitializeMap();
     }
 
