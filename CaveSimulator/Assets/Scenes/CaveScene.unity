@@ -732,7 +732,7 @@ GameObject:
   - component: {fileID: 641698900}
   - component: {fileID: 641698899}
   m_Layer: 5
-  m_Name: ErodeBtn
+  m_Name: LeaveBtn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -756,8 +756,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 184.5, y: 38.4}
-  m_SizeDelta: {x: 62.73001, y: 30}
+  m_AnchoredPosition: {x: 208.6, y: 37.9}
+  m_SizeDelta: {x: 100, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &641698899
 MonoBehaviour:
@@ -803,9 +803,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1361770935}
-        m_TargetAssemblyTypeName: CaveSimulation, Assembly-CSharp
-        m_MethodName: Erosion
+      - m_Target: {fileID: 519420033}
+        m_TargetAssemblyTypeName: CameraMovement, Assembly-CSharp
+        m_MethodName: LeaveCaveScene
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1306,6 +1306,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0141e2509ba9e5d4593c9b98b195d8fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mapData: {fileID: 11400000, guid: d87b63c8f6bcf214ab4b8f698f5ecbc7, type: 2}
   depthSlider: {fileID: 1406070184}
 --- !u!4 &1361770934
 Transform:
@@ -1508,7 +1509,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Erode
+  m_Text: Leave Cave
 --- !u!222 &1434719689
 CanvasRenderer:
   m_ObjectHideFlags: 0

@@ -13,13 +13,14 @@ public class Map
     public Texture2D[,] materialTextureLayers { get; set; }
     public int waterLevel { get; set; }
     public int age {get; set;}
+    public float waveForce{ get; set; }
 
     // Private variables
     private float noiseFrequency = 1.01f;
     
 
     // Constructor
-    public Map(int width, int height, int depth, int age, int waterLevel)
+    public Map(int width, int height, int depth, int age, int waterLevel, float waveForce = 1.0f)
     {
         this.width = width;
         this.height = height;
@@ -28,6 +29,7 @@ public class Map
         // Age is a factor when creating the cave
         this.age = age;
         this.waterLevel = waterLevel;
+        this.waveForce = waveForce;
         mapMatrix = new CaveMat[width, height, depth];
         InitializeMap();
     }
@@ -88,15 +90,14 @@ public class Map
                         material = CaveMat.air;
                     }
 
-                    float erosionNoise = (Mathf.PerlinNoise((float)x / (width * 0.02f), (float)z / (width * 0.02f)) * 0.4f + 0.4f) * (Mathf.Pow(0.975f, Mathf.Abs(waterLevel-y)));
+                    float erosionNoise = (Mathf.PerlinNoise((float)x / (width * 0.02f), (float)z / (width * 0.02f)) * 0.3f + 0.5f) * (Mathf.Pow(0.965f + waveForce/100.0f, Mathf.Abs(waterLevel-y)));
 
                     // Add to the matrix that will be erroded
                     divisor = Mathf.Max(width, height);
                     if( y < cliffFace && 
-                        y < waterLevel + (Mathf.PerlinNoise((float)x/(width*0.12f), (float)z/(width*0.12f)) * age/3.5) && 
-                        noise < erosionNoise && //(Random.Range(0.45f, 0.6f)) && 
-                        // perlinNoise.get3DPerlinNoise(new Vector3((float)x / (divisor), (float)y / divisor, (float)z / (divisor)), noiseFrequency*1.0f) < 0.3f &&
-                        x < (-((float)1/(age / 10) * 1.8f) * Mathf.Pow((y - waterLevel), 2) + cliffFaceOffset + age + (Mathf.PerlinNoise((float)x / (width * 0.02f), (float)z / (width * 0.02f)) * 60)))
+                        y < waterLevel + (Mathf.PerlinNoise((float)x/(width*0.12f), (float)z/(width*0.12f)) * (age*waveForce)/3.5) && 
+                        noise < erosionNoise &&
+                        x < (-((float)1/((age / 10) * waveForce) * 1.8f) * Mathf.Pow((y - waterLevel), 2) + cliffFaceOffset + (age*waveForce) + (Mathf.PerlinNoise((float)x / (width * 0.02f), (float)z / (width * 0.02f)) * 60)))
                     {
                         material = CaveMat.air;
                     }

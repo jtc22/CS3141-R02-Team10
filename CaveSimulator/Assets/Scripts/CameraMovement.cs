@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CameraMovement : MonoBehaviour
 {
@@ -22,6 +23,11 @@ public class CameraMovement : MonoBehaviour
     void Update()
     {
         PanCamera();
+    }
+
+    public void LeaveCaveScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
     }
 
     private void PanCamera()

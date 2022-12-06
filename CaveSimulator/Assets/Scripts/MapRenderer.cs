@@ -5,7 +5,8 @@ using UnityEngine.UI;
 using static MaterialProperties;
 
 public class MapRenderer : MonoBehaviour
-{    
+{
+    [SerializeField] private MapData mapData;
     public Map map { get; set;}
     public CaveSimulation caveSim {get; set;}
     public Slider depthSlider;
@@ -17,8 +18,8 @@ public class MapRenderer : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        map = new Map(800, 600, 30, 450, 600/3);
-        depthSlider.maxValue = 30 - 1;
+        map = new Map(mapData.width, mapData.height, mapData.depth, mapData.age, mapData.waterLevel, mapData.waveForce);
+        depthSlider.maxValue = map.height - 1;
         currDepth = map.depth / 2;
 
         createdVoxels = new GameObject[map.width, map.height, map.depth];
