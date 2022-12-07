@@ -19,7 +19,7 @@ public class MapRenderer : MonoBehaviour
     void Start()
     {
         map = new Map(mapData.width, mapData.height, mapData.depth, mapData.age, mapData.waterLevel, mapData.waveForce);
-        depthSlider.maxValue = map.height - 1;
+        depthSlider.maxValue = map.depth - 1;
         currDepth = map.depth / 2;
 
         createdVoxels = new GameObject[map.width, map.height, map.depth];
